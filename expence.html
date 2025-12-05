@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" type="text/css" href="Expstyle.css" />
+</head>
+
+<body>
+    <div class="container">
+        <h1>Expense Tracker</h1>
+        <form id="expense-form">
+            <input type="text" id="expense-name" placeholder="Expense Name" required />
+            <input type="number" id="expense-amount" placeholder="Amount" required />
+            <select id="expense-category" required>
+                <option value="" disabled selected>Select Category</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Other">Other</option>
+            </select>
+            <input type="date" id="expense-date" required />
+            <button type="submit">Add Expense</button>
+        </form>
+        <div class="expense-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Expense Name</th>
+                        <th>Amount</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="expense-list"></tbody>
+            </table>
+            <div class="total-amount">
+                <strong>Total:</strong> <span id="total-amount">  0</span>
+            </div>
+        </div>
+        <div class="filter">
+            <label for="filter-category">Filter by Category:</label>
+            <select id="filter-category">
+                <option value="All">All</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+    </div>
+    <script src="Expscript.js"></script>
+</body>
+
+</html>
+
+<!--
+		****CSS code****
+/* Import a modern font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+    --primary-color: #4CAF50; /* Green */
+    --secondary-color: #f44336; /* Red for delete */
+    --background-color: #f4f7f6;
+    --card-color: #ffffff;
+    --text-color: #333;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--card-color);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+h1 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+/* --- Form Styling --- */
+#expense-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+
+.input-group {
+    display: flex;
+    gap: 15px;
+}
+
+.input-group > * {
+    flex: 1; /* Make inputs and selects take equal width */
+    min-width: 0; /* Prevents overflow */
+}
+
+input[type="text"], 
+input[type="number"], 
+input[type="date"], 
+select {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+input:focus, select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+#add-expense-btn {
+    padding: 12px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 17px;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+#add-expense-btn:hover {
+    background-color: #45a049;
+}
+
+/* --- Controls Section (Filter & Total) --- */
+.controls-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px 0;
+}
+
+.filter label {
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+#filter-category {
+    padding: 8px 12px;
+    border: 1px solid #353232;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+.total-amount-box {
+    background-color: #e8f5e9;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+#total-amount {
+    font-weight: 700;
+    margin-left: 5px;
+}
+
+/* --- Table Styling --- */
+.expense-table-container {
+    overflow-x: auto; /* Ensures table is scrollable on small screens */
+}
+
+.expense-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.expense-table thead tr {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.expense-table th, .expense-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.expense-table tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+.delete-btn {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: #d32f2f;
+}
+
+#empty-list-message {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-style: italic;
+    display: none; /* Controlled by JS */
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+    }
+
+    .input-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .controls-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .total-amount-box {
+        width: 100%;
+        text-align: center;
+    }
+
+    .expense-table th, .expense-table td {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+}
+
+-->
+<!--
+
+		****JavaScript code****
+		
+		document.addEventListener('DOMContentLoaded', () => {
+    // --- DOM Elements ---
+    const expenseForm = document.getElementById('expense-form');
+    const expenseList = document.getElementById('expense-list');
+    const totalAmountSpan = document.getElementById('total-amount');
+    const filterCategorySelect = document.getElementById('filter-category');
+
+    // --- State: Load expenses from Local Storage or initialize an empty array ---
+    let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+
+    // --- Utility Functions ---
+
+    /**
+     * Saves the current expenses array to Local Storage.
+     */
+    const saveExpenses = () => {
+        localStorage.setItem('expenses', JSON.stringify(expenses));
+    };
+
+    /**
+     * Calculates and displays the total sum of the currently displayed expenses.
+     */
+    const updateTotalAmount = (filteredExpenses) => {
+        // Calculate total only for the *filtered* expenses that are displayed
+        const total = filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+        totalAmountSpan.textContent = `$${total.toFixed(2)}`;
+    };
+
+    /**
+     * Renders the current list of expenses to the table, applying filters.
+     */
+    const renderExpenses = () => {
+        expenseList.innerHTML = ''; // Clear the current list
+        const selectedCategory = filterCategorySelect.value;
+
+        // 1. Filter expenses based on the selected category
+        const filteredExpenses = expenses.filter(expense => {
+            return selectedCategory === 'All' || expense.category === selectedCategory;
+        });
+
+        // 2. Create table rows for each filtered expense
+        filteredExpenses.forEach(expense => {
+            const row = expenseList.insertRow();
+            row.dataset.id = expense.id; // Store unique ID for easy access
+
+            row.insertCell().textContent = expense.name;
+            row.insertCell().textContent = `$${expense.amount.toFixed(2)}`;
+            row.insertCell().textContent = expense.category;
+            row.insertCell().textContent = expense.date;
+
+            // Action Cell
+            const actionCell = row.insertCell();
+            
+            // Edit Button
+            const editButton = document.createElement('button');
+            editButton.textContent = 'Edit';
+            editButton.classList.add('edit-btn');
+            editButton.addEventListener('click', () => editExpense(expense.id));
+            actionCell.appendChild(editButton);
+
+            // Delete Button
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.classList.add('delete-btn');
+            deleteButton.addEventListener('click', () => deleteExpense(expense.id));
+            actionCell.appendChild(deleteButton);
+        });
+
+        // 3. Update the total amount
+        updateTotalAmount(filteredExpenses);
+    };
+
+    // --- CRUD Operations ---
+
+    /**
+     * Handles the form submission to add a new expense.
+     */
+    const addExpense = (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('expense-name').value.trim();
+        const amount = parseFloat(document.getElementById('expense-amount').value);
+        const category = document.getElementById('expense-category').value;
+        const date = document.getElementById('expense-date').value;
+
+        if (!name || isNaN(amount) || amount <= 0 || !category || !date) {
+            alert('Please fill out all fields correctly.');
+            return;
+        }
+
+        const newExpense = {
+            id: Date.now(), // Unique ID
+            name,
+            amount,
+            category,
+            date
+        };
+
+        expenses.push(newExpense);
+        saveExpenses();
+        expenseForm.reset();
+        renderExpenses();
+    };
+
+    /**
+     * Removes an expense from the array by its ID.
+     */
+    const deleteExpense = (id) => {
+        if (!confirm('Are you sure you want to delete this expense?')) return;
+        
+        expenses = expenses.filter(expense => expense.id !== id);
+        saveExpenses();
+        renderExpenses();
+    };
+
+    /**
+     * Allows the user to edit an existing expense.
+     * (A simple prompt-based edit for brevity, a full modal is better for production)
+     */
+    const editExpense = (id) => {
+        const expense = expenses.find(e => e.id === id);
+        if (!expense) return;
+
+        const newName = prompt('Enter new Expense Name:', expense.name);
+        if (newName === null) return; 
+
+        const newAmount = prompt('Enter new Amount:', expense.amount);
+        const parsedAmount = parseFloat(newAmount);
+
+        if (newName.trim() === '' || isNaN(parsedAmount) || parsedAmount <= 0) {
+            alert('Invalid input. Edit cancelled.');
+            return;
+        }
+
+        expense.name = newName.trim();
+        expense.amount = parsedAmount;
+        // Optionally allow editing other fields
+        
+        saveExpenses();
+        renderExpenses();
+    };
+
+    // --- Event Listeners ---
+
+    expenseForm.addEventListener('submit', addExpense);
+    filterCategorySelect.addEventListener('change', renderExpenses);
+
+    // Initial load and render
+    renderExpenses();
+});
+
+-->
